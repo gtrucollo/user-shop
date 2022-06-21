@@ -16,5 +16,5 @@ public interface IRepository<TEntity> where TEntity : Entidade
     /// </summary>
     /// <param name="id">Identificador da entidade</param>
     /// <returns>Os dados da entidade</returns>
-    Task<TEntity> SelecionarPorIdAssync(Guid id);
+    Task<TEntity> SelecionarPorIdAssync(long id);
 }

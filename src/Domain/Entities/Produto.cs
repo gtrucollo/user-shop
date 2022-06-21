@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Base;
+﻿using System.ComponentModel.DataAnnotations;
+using Domain.Entities.Base;
 
 namespace Domain.Entities;
 
@@ -8,21 +9,25 @@ public class Produto : Entidade
     /// <summary>
     /// Obtém ou define Inclusao
     /// </summary>
-    public DateTimeOffset Inclusao { get; set; } = DateTimeOffset.Now;
+    [Required]
+    public DateTimeOffset Inclusao { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     /// Obtém ou define Alteracao
     /// </summary>
-    public DateTimeOffset Alteracao { get; set; } = DateTimeOffset.Now;
+    [Required]
+    public DateTimeOffset Alteracao { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     /// Obtém ou define Nome
     /// </summary>
+    [Required, StringLength(50)]
     public string Nome { get; set; }
 
     /// <summary>
     /// Obtém ou define Valor
     /// </summary>
+    [Required]
     public double Valor { get; set; }
     #endregion
 

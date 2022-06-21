@@ -1,11 +1,14 @@
-﻿namespace Domain.Entities.Base;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Entities.Base;
 
 public abstract class Entidade
 {
     /// <summary>
     /// Obtém ou define Id
     /// </summary>
-    public virtual Guid Id { get; set; } = Guid.NewGuid();
+    [Key]
+    public virtual long Id { get; set; }
 
     /// <summary>
     /// Validar os dados

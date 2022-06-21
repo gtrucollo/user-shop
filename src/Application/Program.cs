@@ -10,7 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddEntityFrameworkNpgsql()
-    .AddDbContext<ProdutoRepository>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("UserShop")));
+    .AddDbContext<ProdutoRepository>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("UserShop"), b => b.MigrationsAssembly("Application")));
 
 builder.Services.AddTransient<IProdutoRepository, ProdutoRepository>();
 
