@@ -9,7 +9,7 @@ public interface IRepository<TEntity> where TEntity : Entidade
     /// </summary>
     /// <param name="entidade">Os dados da entidade a ser salva</param>
     /// <returns>A entidade salva</returns>
-    Task<TEntity> SalvarAsync(TEntity entidade);
+    Task<TEntity> AdicionarAsync(TEntity entidade);
 
     /// <summary>
     /// Selecionar por identificador

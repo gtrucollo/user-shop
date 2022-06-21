@@ -3,7 +3,7 @@ using Domain.Repositories.Base;
 
 namespace Domain.Repositories
 {
-    public interface IProduto : IRepository<Produto>
+    public interface IProdutoRepository : IRepository<Produto>
     {
     }
 }
