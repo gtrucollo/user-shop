@@ -1,10 +1,17 @@
 ﻿@page "/produto"
 @inject FactoryService factoryService;
+@using UI.Components.Produtos
 @using UI.ObjetosDto
 
 <PageTitle>Cadastro de Produtos</PageTitle>
 
 <h1>Produtos</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-primary" @onclick="() => AbrirFormularioInclusao(0)">Novo</button>
+    </div>
+</div>
 
 @if (produtos == null)
 {
@@ -14,12 +21,14 @@ else
 {
     @foreach (ProdutoDto produto in produtos)
     {
-        <div class="row">
+        <div class="row mt-2">
             <div class="col-md-12">
-                <div class="card col-md-4">
+                <div class="card col-md-3">
                     <div class="card-body">
                         <h5 class="card-title">@produto.Nome</h5>
                         <p class="card-text"><b>Preço</b> R$ @produto.Valor</p>
+                        <button class="btn btn-warning" @onclick="() => AbrirFormularioInclusao(produto.Id)">Editar</button>
+                        <button class="btn btn-danger" @onclick="() => RemoverRegistro(produto.Id)">Remover</button>
                     </div>
                 </div>
             </div>
@@ -27,13 +36,51 @@ else
     }
 }
 
+@if (DialogOpen)
+{
+    <ProdutosForm produtoId=ProdutoId OnClose="@FecharFormularioInclusao"></ProdutosForm>
+}
 @code {
+
+    public bool DialogOpen { get; set; }
 
     List<ProdutoDto> produtos;
 
-    protected override async Task OnInitializedAsync()
+    public long ProdutoId { get; set; }
+
+    private async Task CarregarDados()
     {
         produtos = await factoryService.Produto.SelecionarTodos();
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await this.CarregarDados();
+    }
+
+    internal void AbrirFormularioInclusao(long produtoId)
+    {
+        this.DialogOpen = true;
+        ProdutoId = produtoId;
+        StateHasChanged();
+    }
+
+    public async Task FecharFormularioInclusao(bool salvo)
+    {
+        this.DialogOpen = false;
+        ProdutoId = 0;
+
+        await this.CarregarDados();
+
+        this.StateHasChanged();
+    }
+
+    public async Task RemoverRegistro(long produtoId)
+    {
+        await factoryService.Produto.Remover(produtoId);
+
+        await this.CarregarDados();
+
+        this.StateHasChanged();
+    }
 }

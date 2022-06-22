@@ -1,0 +1,76 @@
+﻿@inject FactoryService factoryService;
+@using UI.ObjetosDto
+
+
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true"
+    role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@produto.Nome</h5>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="nome">Nome</label>
+                            <input class="form-control" name="nome" @bind="@produto.Nome" maxlength="50" required />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="nome">Valor</label>
+                            <input class="form-control" name="valor" @bind="@produto.Valor" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick=@ModalCancel
+                    data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" @onclick=@ModalSave>Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public long produtoId { get; set; }
+
+    ProdutoDto produto = new();
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (produtoId > 0)
+        {
+            produto = await factoryService.Produto.SelecionarPorId(produtoId);
+        }
+    }
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalSave()
+    {
+        switch (this.produtoId > 0)
+        {
+            case true:
+                await factoryService.Produto.Atualizar(this.produtoId, this.produto);
+                break;
+
+            default:
+                await factoryService.Produto.Adicionar(this.produto);
+                break;
+        }
+
+        await OnClose.InvokeAsync(true);
+    }
+}

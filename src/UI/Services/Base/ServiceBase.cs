@@ -12,7 +12,6 @@ public class ServiceBase
 
     public virtual async Task<T> EfetuarRequisicaoGetAsync<T>(string nomeServico)
     {
-        Console.WriteLine(nomeServico);
         HttpResponseMessage resposta;
         try
         {
@@ -29,6 +28,24 @@ public class ServiceBase
         }
 
         return await resposta.Content.ReadFromJsonAsync<T>();
+    }
+
+    public virtual async Task EfetuarRequisicaoGetAsync(string nomeServico)
+    {
+        HttpResponseMessage resposta;
+        try
+        {
+            resposta = await _httpClient.GetAsync(nomeServico);
+        }
+        catch (HttpRequestException exp)
+        {
+            throw new Exception($"{exp.StatusCode}");
+        }
+
+        if (!resposta.IsSuccessStatusCode)
+        {
+            throw new Exception($"{resposta.StatusCode}, {await resposta.Content.ReadAsStringAsync()}");
+        }
     }
 
     public virtual async Task<T> EfetuarRequisicaoPostAsync<T>(string nomeServico, object dados)

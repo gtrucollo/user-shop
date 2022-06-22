@@ -7,8 +7,8 @@ public class ProdutoService : ServiceBase
     private const string serviceName = "Produto";
 
     public ProdutoService(HttpClient httpClient)
-        : base (httpClient)
-    {        
+        : base(httpClient)
+    {
     }
 
     public async Task<List<ProdutoDto>> SelecionarTodos()
@@ -31,8 +31,8 @@ public class ProdutoService : ServiceBase
         return await this.EfetuarRequisicaoPostAsync<ProdutoDto>($"{serviceName}/Atualizar/{id}", produtoDto);
     }
 
-    public async Task<ProdutoDto> Remover(long id)
+    public async Task Remover(long id)
     {
-        return await this.EfetuarRequisicaoGetAsync<ProdutoDto>($"{serviceName}/Remover/{id}");
+        await this.EfetuarRequisicaoGetAsync($"{serviceName}/Remover/{id}");
     }
 }
