@@ -1,6 +1,6 @@
 ﻿namespace Application.ObjetosDto
 {
-    public class ProdutoCadastroDto
+    public class ProdutoDto
     {
         /// <summary>
         /// Obtém ou define Nome
