@@ -10,6 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options => options.AddPolicy("PoliticaCors", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
 builder.Services.AddEntityFrameworkNpgsql()
     .AddDbContext<DatabaseContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("UserShop"), b => b.MigrationsAssembly("Application")));
 
@@ -28,5 +30,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseCors("PoliticaCors");
 app.Run();

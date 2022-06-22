@@ -1,0 +1,39 @@
+﻿@page "/produto"
+@inject FactoryService factoryService;
+@using UI.ObjetosDto
+
+<PageTitle>Cadastro de Produtos</PageTitle>
+
+<h1>Produtos</h1>
+
+@if (produtos == null)
+{
+    <p><em>Carregando produtos...</em></p>
+}
+else
+{
+    @foreach (ProdutoDto produto in produtos)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card col-md-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@produto.Nome</h5>
+                        <p class="card-text"><b>Preço</b> R$ @produto.Valor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+
+    List<ProdutoDto> produtos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        produtos = await factoryService.Produto.SelecionarTodos();
+    }
+
+}
