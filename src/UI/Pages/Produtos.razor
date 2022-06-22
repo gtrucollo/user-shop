@@ -9,7 +9,8 @@
 
 <div class="row">
     <div class="col-md-12">
-        <button class="btn btn-primary" @onclick="() => AbrirFormularioInclusao(0)">Novo</button>
+        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small"
+            @onclick="() => AbrirFormularioInclusao(0)" />
     </div>
 </div>
 
@@ -26,9 +27,11 @@ else
                 <div class="card col-md-3">
                     <div class="card-body">
                         <h5 class="card-title">@produto.Nome</h5>
-                        <p class="card-text"><b>Preço</b> R$ @produto.Valor</p>
-                        <button class="btn btn-warning" @onclick="() => AbrirFormularioInclusao(produto.Id)">Editar</button>
-                        <button class="btn btn-danger" @onclick="() => RemoverRegistro(produto.Id)">Remover</button>
+                        <p class="card-text"><b>Preço</b> @string.Format("R$ {0:N2}",@produto.Valor)</p>
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" Size="Size.Small"
+                    @onclick="() => AbrirFormularioInclusao(produto.Id)" />
+                        <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Remove" Size="Size.Small"
+                    @onclick="() => RemoverRegistro(produto.Id)" />
                     </div>
                 </div>
             </div>

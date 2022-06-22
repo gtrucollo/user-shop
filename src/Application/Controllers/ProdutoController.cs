@@ -1,8 +1,8 @@
-using Application.ObjetosDto;
-using Domain.Repositories;
-using Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using Application.ObjetosDto;
+using Domain.Entities;
+using Domain.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Controllers;
 
@@ -24,7 +24,7 @@ public class ProdutoController : ControllerBase
         {
             List<Produto> produtos = await _produtoRepository.SelecionarTodosAsync();
 
-            return Ok(produtos.Select(p => new { p.Id, p.Nome, p.Valor }));
+            return Ok(produtos.OrderBy(x => x.Id).Select(p => new { p.Id, p.Nome, p.Valor }));
         }
         catch (Exception exp)
         {
@@ -38,7 +38,7 @@ public class ProdutoController : ControllerBase
         try
         {
             Produto produto = await _produtoRepository.SelecionarPorIdAssync(produtoId);
-            if(produto == null)
+            if (produto == null)
             {
                 return NotFound();
             }
@@ -74,7 +74,7 @@ public class ProdutoController : ControllerBase
         try
         {
             Produto produto = await _produtoRepository.SelecionarPorIdAssync(produtoId);
-            if(produto == null)
+            if (produto == null)
             {
                 return NotFound();
             }
@@ -104,11 +104,11 @@ public class ProdutoController : ControllerBase
                 return NotFound();
             }
 
-            await _produtoRepository.RemoverAsync(produto); 
+            await _produtoRepository.RemoverAsync(produto);
 
             return Ok();
         }
-        catch(Exception exp)
+        catch (Exception exp)
         {
             return BadRequest(exp.Message);
         }

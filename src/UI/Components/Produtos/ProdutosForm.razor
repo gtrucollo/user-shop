@@ -1,4 +1,5 @@
 ﻿@inject FactoryService factoryService;
+@using System.Globalization
 @using UI.ObjetosDto
 
 
@@ -10,26 +11,20 @@
                 <h5 class="modal-title">@produto.Nome</h5>
             </div>
             <div class="modal-body">
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label for="nome">Nome</label>
-                            <input class="form-control" name="nome" @bind="@produto.Nome" maxlength="50" required />
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="nome">Valor</label>
-                            <input class="form-control" name="valor" @bind="@produto.Valor" required />
-                        </div>
-                    </div>
-                </div>
+                <MudGrid Class="justify-space-between">
+                    <MudItem xs="12">
+                        <MudTextField Label="Nome" @bind-Value="@produto.Nome" Variant="@Variant.Text" Clearable
+                            MaxLength=50 Required />
+                    </MudItem>
+                    <MudItem xs="12" sm="6" md="6">
+                        <MudNumericField Culture="@_de" Label="Valor" @bind-Value="@produto.Valor"
+                            Variant="@Variant.Text" Format="N2" Required Clearable />
+                    </MudItem>
+                </MudGrid>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick=@ModalCancel
-                    data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" @onclick=@ModalSave>Salvar</button>
+            <div class=" modal-footer">
+                <MudFab Color="Color.Secondary" StartIcon="@Icons.Filled.Close" Label="Fechar" @onclick=@ModalCancel />
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Filled.Save" Label="Salvar" @onclick=@ModalSave />
             </div>
         </div>
     </div>
@@ -39,6 +34,8 @@
 
     [Parameter]
     public long produtoId { get; set; }
+
+    public CultureInfo _de = CultureInfo.GetCultureInfo("de-DE");
 
     ProdutoDto produto = new();
 
