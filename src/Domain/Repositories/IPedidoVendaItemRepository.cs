@@ -5,6 +5,6 @@ namespace Domain.Repositories
 {
     public interface IPedidoVendaItemRepository : IRepository<PedidoVendaItem>
     {
-        public Task<List<PedidoVenda>> SelecionarTodosPorPedidoVenda(Guid pedidoVendaId);
+        public Task<List<PedidoVenda>> SelecionarTodosPorPedidoVenda(long pedidoVendaId);
     }
 }

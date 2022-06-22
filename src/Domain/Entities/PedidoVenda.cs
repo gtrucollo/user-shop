@@ -40,10 +40,13 @@ public class PedidoVenda : Entidade
         if(item == null)
         {
             item = new() { IdProduto = produto };
+            this.Items.Add(item);
         }
 
         item.Quantidade += quantidade;
         item.ValorTotal = Math.Round(item.ValorTotal + produto.Valor, 2, MidpointRounding.AwayFromZero);
+
+        this.AtualizarValores();
     }
 
     /// <summary>
@@ -63,10 +66,19 @@ public class PedidoVenda : Entidade
         if (item.Quantidade <= 0)
         {
             this.Items.Remove(item);
+            this.AtualizarValores();
             return;
         }
 
         item.ValorTotal = Math.Round(item.ValorTotal - produto.Valor, 2, MidpointRounding.AwayFromZero);
+        this.AtualizarValores();
+    }
+
+    private void AtualizarValores()
+    {
+        this.Quantidade = (uint)this.Items.Sum(x => x.Quantidade);
+
+        this.ValorTotal = Math.Round(this.Items.Sum(x => x.ValorTotal), 2, MidpointRounding.AwayFromZero);
     }
     #endregion
 }
