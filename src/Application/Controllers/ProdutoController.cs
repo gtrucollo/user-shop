@@ -26,9 +26,9 @@ public class ProdutoController : ControllerBase
 
             return Ok(produtos.Select(p => new { p.Id, p.Nome, p.Valor }));
         }
-        catch
+        catch (Exception exp)
         {
-            return BadRequest("Ocorreu um erro ao selecionar os dados.");
+            return BadRequest(exp.Message);
         }
     }
 
@@ -45,9 +45,9 @@ public class ProdutoController : ControllerBase
 
             return Ok(new { produto.Id, produto.Nome, produto.Valor });
         }
-        catch
+        catch (Exception exp)
         {
-            return BadRequest("Ocorreu um erro ao selecionar os dados.");
+            return BadRequest(exp.Message);
         }
     }
 
@@ -62,9 +62,9 @@ public class ProdutoController : ControllerBase
 
             return Ok(JsonSerializer.Serialize(new { produto.Id, produto.Nome, produto.Valor }));
         }
-        catch
+        catch (Exception exp)
         {
-            return BadRequest("Ocorreu um erro ao processar os dados.");
+            return BadRequest(exp.Message);
         }
     }
 
@@ -87,9 +87,9 @@ public class ProdutoController : ControllerBase
 
             return Ok(JsonSerializer.Serialize(new { produto.Id, produto.Nome, produto.Valor }));
         }
-        catch
+        catch (Exception exp)
         {
-            return BadRequest("Ocorreu um erro ao processar os dados.");
+            return BadRequest(exp.Message);
         }
     }
 
@@ -108,9 +108,9 @@ public class ProdutoController : ControllerBase
 
             return Ok();
         }
-        catch
+        catch(Exception exp)
         {
-            return BadRequest("Ocorreu um erro ao processar os dados.");
+            return BadRequest(exp.Message);
         }
     }
 }

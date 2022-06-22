@@ -8,12 +8,12 @@ public class PedidoVendaItem : Entidade
     /// <summary>
     /// Obtém ou define Inclusao
     /// </summary>
-    public DateTimeOffset Inclusao { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset Inclusao { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     /// Obtém ou define Alteracao
     /// </summary>
-    public DateTimeOffset Alteracao { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset Alteracao { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     /// Obtém ou define IdPedidoVenda
