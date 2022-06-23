@@ -18,14 +18,14 @@ namespace Infrastructure.Repositories
         {
             pedidoVenda.Validar();
 
-            PedidoVenda pedido = new () { Quantidade = pedidoVenda.Quantidade, ValorTotal = pedidoVenda.Quantidade };
+            PedidoVenda pedido = new() { Quantidade = pedidoVenda.Quantidade, ValorTotal = pedidoVenda.ValorTotal };
 
             await _context.PedidoVendas.AddAsync(pedido);
 
 
             await _context.SaveChangesAsync();
 
-            foreach(PedidoVendaItem item in pedidoVenda.Items)
+            foreach (PedidoVendaItem item in pedidoVenda.Items)
             {
                 item.IdPedidoVenda = pedido;
 
@@ -41,8 +41,8 @@ namespace Infrastructure.Repositories
 
         public async Task<PedidoVenda> SelecionarPorIdAssync(long id)
         {
-            PedidoVenda pedidoVenda =  await _context.PedidoVendas.Where(x => x.Id == id).FirstOrDefaultAsync();
-            if(pedidoVenda == null)
+            PedidoVenda pedidoVenda = await _context.PedidoVendas.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (pedidoVenda == null)
             {
                 return null;
             }
@@ -55,7 +55,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<PedidoVenda>> SelecionarTodosAsync()
         {
-            List<PedidoVenda> listaPedidoVenda =  await _context.PedidoVendas.ToListAsync();
+            List<PedidoVenda> listaPedidoVenda = await _context.PedidoVendas.ToListAsync();
 
             var pedidosVendaItemLookup = (await _context.PedidoVendasItems.Include(e => e.IdProduto).ToListAsync()).ToLookup(x => x.IdPedidoVenda.Id);
             foreach (PedidoVenda pedidoVenda in listaPedidoVenda)
@@ -72,6 +72,8 @@ namespace Infrastructure.Repositories
 
             pedidoVenda.Validar();
 
+
+            _context.PedidoVendasItems.RemoveRange(_context.PedidoVendasItems.Where(x => x.IdPedidoVenda.Id == pedidoVenda.Id).ToList());
             _context.PedidoVendas.Update(pedidoVenda);
 
             foreach (PedidoVendaItem item in pedidoVenda.Items)
@@ -90,6 +92,7 @@ namespace Infrastructure.Repositories
         {
             pedidoVenda.Validar();
 
+            _context.PedidoVendasItems.RemoveRange(pedidoVenda.Items);
             _context.PedidoVendas.Remove(pedidoVenda);
 
             await _context.SaveChangesAsync();

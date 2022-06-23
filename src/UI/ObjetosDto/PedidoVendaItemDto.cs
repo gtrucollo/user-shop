@@ -15,6 +15,6 @@
         /// <summary>
         /// Obtém ou define Quantidade
         /// </summary>
-        public uint Quantidade { get; set; }
+        public int Quantidade { get; set; }
     }
 }

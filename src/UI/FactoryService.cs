@@ -8,6 +8,8 @@ namespace UI
 
         private ProdutoService _produto;
 
+        private PedidoVendaService _pedidoVenda;
+
         public FactoryService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -21,6 +23,16 @@ namespace UI
                 _produto ??= new(_httpClient);
 
                 return _produto;
+            }
+        }
+
+        public PedidoVendaService PedidoVenda
+        {
+            get
+            {
+                _pedidoVenda ??= new(_httpClient);
+
+                return _pedidoVenda;
             }
         }
     }

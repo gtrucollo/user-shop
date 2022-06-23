@@ -1,9 +1,9 @@
-using Application.ObjetosDto;
-using Domain.Repositories;
-using Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using System.Linq;
+using System.Text.Json;
+using Application.ObjetosDto;
+using Domain.Entities;
+using Domain.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Controllers;
 
@@ -75,7 +75,7 @@ public class PedidoVendaController : ControllerBase
     {
         try
         {
-            PedidoVenda pedidoVenda = new() { Quantidade = pedidoVendaDto.Quantidade, ValorTotal =  pedidoVendaDto.ValorTotal };
+            PedidoVenda pedidoVenda = new() { Quantidade = pedidoVendaDto.Quantidade, ValorTotal = pedidoVendaDto.ValorTotal };
 
             var produtosLookup = (await _produtoRepository.SelecionarTodosAsync()).ToLookup(x => x.Id);
 
@@ -103,31 +103,31 @@ public class PedidoVendaController : ControllerBase
     {
         try
         {
-            try
+            PedidoVenda pedidoVenda = await _pedidoVendaRepository.SelecionarPorIdAssync(pedidoVendaId);
+            if (pedidoVenda == null)
             {
-                PedidoVenda pedidoVenda = await _pedidoVendaRepository.SelecionarPorIdAssync(pedidoVendaId);
-                pedidoVenda.Quantidade = pedidoVendaDto.Quantidade;
-                pedidoVenda.ValorTotal = pedidoVendaDto.ValorTotal;
-
-                pedidoVenda.Items.ForEach( i => pedidoVenda.RemoverItem(i.IdProduto, i.Quantidade));
-
-                pedidoVendaDto.Items.ForEach(async i => pedidoVenda.AdicionarItem(await _produtoRepository.SelecionarPorIdAssync(i.IdProduto), i.Quantidade));
-
-                pedidoVenda = await _pedidoVendaRepository.AdicionarAsync(pedidoVenda);
-
-                return Ok(JsonSerializer.Serialize(
-                   new
-                   {
-                       pedidoVenda.Id,
-                       pedidoVenda.Quantidade,
-                       pedidoVenda.ValorTotal,
-                       Items = pedidoVenda.Items.Select(y => new { y.IdProduto.Id, y.Quantidade, y.ValorTotal, })
-                   }));
+                return NotFound();
             }
-            catch (Exception exp)
-            {
-                return BadRequest(exp.Message);
-            }
+
+            pedidoVenda.Quantidade = pedidoVendaDto.Quantidade;
+            pedidoVenda.ValorTotal = pedidoVendaDto.ValorTotal;
+
+            pedidoVenda.Items.ToList().ForEach(i => pedidoVenda.RemoverItem(i.IdProduto, i.Quantidade));
+
+            var produtosLookup = (await _produtoRepository.SelecionarTodosAsync()).ToLookup(x => x.Id);
+            pedidoVendaDto.Items.ForEach(i => pedidoVenda.AdicionarItem(produtosLookup[i.IdProduto].FirstOrDefault(), i.Quantidade));
+
+            pedidoVenda = await _pedidoVendaRepository.AtualizarAsync(pedidoVenda);
+
+            return Ok(JsonSerializer.Serialize(
+               new
+               {
+                   pedidoVenda.Id,
+                   pedidoVenda.Quantidade,
+                   pedidoVenda.ValorTotal,
+                   Items = pedidoVenda.Items.Select(y => new { y.IdProduto.Id, y.Quantidade, y.ValorTotal, })
+               }));
+
         }
         catch (Exception exp)
         {
@@ -148,7 +148,7 @@ public class PedidoVendaController : ControllerBase
 
             await _pedidoVendaRepository.RemoverAsync(pedidoVenda);
 
-            return Ok();
+            return NoContent();
         }
         catch (Exception exp)
         {

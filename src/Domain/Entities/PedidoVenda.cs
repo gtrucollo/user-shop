@@ -40,14 +40,14 @@ public class PedidoVenda : Entidade
     public void AdicionarItem(Produto produto, uint quantidade)
     {
         PedidoVendaItem item = this.Items.Where(x => x.IdProduto?.Id == produto.Id).FirstOrDefault();
-        if(item == null)
+        if (item == null)
         {
             item = new() { IdProduto = produto };
             this.Items.Add(item);
         }
 
         item.Quantidade += quantidade;
-        item.ValorTotal = Math.Round(item.ValorTotal + produto.Valor, 2, MidpointRounding.AwayFromZero);
+        item.ValorTotal = Math.Round(produto.Valor * item.Quantidade, 2, MidpointRounding.AwayFromZero);
 
         this.AtualizarValores();
     }

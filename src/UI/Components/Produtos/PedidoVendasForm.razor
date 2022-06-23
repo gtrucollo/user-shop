@@ -1,0 +1,94 @@
+﻿@inject FactoryService factoryService;
+@using System.Globalization
+@using UI.ObjetosDto
+
+
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true"
+    role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pedido de Venda @string.Format("Código ({0:N0})", @pedidoVenda.Id)</h5>
+            </div>
+            <div class="modal-body">
+                <MudItem xs="12" sm="12" md="12">
+                    <MudSelect @bind-Value=@itemDto.IdProduto Dense="true" T="long" Label="Produto"
+                        Variant="Variant.Text">
+                        @foreach (ProdutoDto produto in produtos)
+                        {
+                            @if(produto.Id == itemDto.IdProduto)
+                            {
+                                <MudSelectItem Value="@produto.Id" Selected="true">@produto.Nome</MudSelectItem>    
+                            }
+                            else
+                            {
+                                <MudSelectItem Value="@produto.Id">@produto.Nome</MudSelectItem>
+                            }
+                            
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="6">
+                    <MudNumericField @bind-Value=@itemDto.Quantidade Label="Quantidade" Variant="Variant.Text"
+                        Min="0" Max="10" />
+                </MudItem>
+            </div>
+            <div class=" modal-footer">
+                <MudFab Color="Color.Secondary" StartIcon="@Icons.Filled.Close" Label="Fechar" @onclick=@ModalCancel />
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Filled.Save" Label="Salvar" @onclick=@ModalSave />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public long pedidoVendaId { get; set; }
+
+    PedidoVendaDto pedidoVenda = new();
+
+    PedidoVendaItemDto itemDto = new();
+
+    List<ProdutoDto> produtos = new List<ProdutoDto>();
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (pedidoVendaId > 0)
+        {
+            pedidoVenda = await factoryService.PedidoVenda.SelecionarPorId(pedidoVendaId);
+            itemDto = pedidoVenda.Items.FirstOrDefault();
+        }
+
+        produtos = await factoryService.Produto.SelecionarTodos();
+    }
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalSave()
+    {
+        switch (this.pedidoVendaId > 0)
+        {
+            case true:
+                this.pedidoVenda.Items.Clear();
+                this.pedidoVenda.Items.Add(this.itemDto);
+
+                await factoryService.PedidoVenda.Atualizar(this.pedidoVendaId, this.pedidoVenda);
+                break;
+
+            default:
+                this.pedidoVenda.Items.Clear();
+                this.pedidoVenda.Items.Add(this.itemDto);
+                await factoryService.PedidoVenda.Adicionar(this.pedidoVenda);
+                break;
+        }
+
+        await OnClose.InvokeAsync(true);
+    }
+}

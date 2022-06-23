@@ -1,0 +1,93 @@
+﻿@page "/pedido-venda"
+@inject FactoryService factoryService;
+@using UI.Components.Produtos
+@using UI.ObjetosDto
+
+<PageTitle>Pedidos de Venda</PageTitle>
+
+<h1>Pedidos de Venda</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small"
+            @onclick="() => AbrirFormularioInclusao(0)" />
+    </div>
+</div>
+
+@if (pedidosVenda == null)
+{
+    <p><em>Carregando os pedidos de venda...</em></p>
+}
+else
+{
+    @foreach (PedidoVendaDto pedidoVenda in pedidosVenda)
+    {
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <div class="card col-md-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@string.Format("Código ({0:N0}) Quantidade: {1:N0}", pedidoVenda.Id,
+                    pedidoVenda.Quantidade)</h5>
+                        <p class="card-text"><b>Valor Total</b> @string.Format("R$ {0:N2}",pedidoVenda.ValorTotal)</p>
+                        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Edit" Size="Size.Small"
+                    @onclick="() => AbrirFormularioInclusao(pedidoVenda.Id)" />
+                        <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Remove" Size="Size.Small"
+                    @onclick="() => RemoverRegistro(pedidoVenda.Id)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (DialogOpen)
+{
+    <PedidoVendasForm pedidoVendaId="@PedidoVendaId" OnClose="@FecharFormularioInclusao"></PedidoVendasForm>
+}
+@code {
+
+    public bool DialogOpen { get; set; }
+
+    List<PedidoVendaDto> pedidosVenda;
+
+    public long PedidoVendaId { get; set; }
+
+    private async Task CarregarDados()
+    {
+        pedidosVenda = await factoryService.PedidoVenda.SelecionarTodos();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await this.CarregarDados();
+    }
+
+    internal void AbrirFormularioInclusao(long pedidoVendaId)
+    {
+        this.DialogOpen = true;
+        PedidoVendaId = pedidoVendaId;
+        StateHasChanged();
+    }
+
+    public async Task FecharFormularioInclusao(bool salvo)
+    {
+        this.DialogOpen = false;
+        PedidoVendaId = 0;
+
+        if (salvo)
+        {
+            await this.CarregarDados();
+        }
+
+        this.StateHasChanged();
+    }
+
+    public async Task RemoverRegistro(long pedidoVendaId)
+    {
+        await factoryService.PedidoVenda.Remover(pedidoVendaId);
+
+        await this.CarregarDados();
+
+        this.StateHasChanged();
+    }
+}

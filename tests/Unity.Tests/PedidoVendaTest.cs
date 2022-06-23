@@ -29,14 +29,14 @@ public class PedidoVendaTest
     [Fact]
     public void TesteDeveriaEstarRetornandoPedidoVendaComUmItemEQuantidadeMaior()
     {
-        _pedidoVenda.AdicionarItem(new Produto() { Id = 1,  Valor = 19.99 }, 1);
+        _pedidoVenda.AdicionarItem(new Produto() { Id = 1, Valor = 19.99 }, 2);
         _pedidoVenda.AdicionarItem(new Produto() { Id = 1, Valor = 19.99 }, 1);
 
         Assert.Single(_pedidoVenda.Items);
 
-        Assert.Equal((uint)2, _pedidoVenda.Quantidade);
+        Assert.Equal((uint)3, _pedidoVenda.Quantidade);
 
-        Assert.Equal(39.98, _pedidoVenda.ValorTotal);
+        Assert.Equal(59.97, _pedidoVenda.ValorTotal);
     }
 
     [Fact]
