@@ -13,7 +13,7 @@
             <div class="modal-body">
                 <MudItem xs="12" sm="12" md="12">
                     <MudSelect @bind-Value=@itemDto.IdProduto Dense="true" T="long" Label="Produto"
-                        Variant="Variant.Text">
+                        Variant="Variant.Text" Required>
                         @foreach (ProdutoDto produto in produtos)
                         {
                             @if(produto.Id == itemDto.IdProduto)
@@ -30,7 +30,7 @@
                 </MudItem>
                 <MudItem xs="12" sm="6" md="6">
                     <MudNumericField @bind-Value=@itemDto.Quantidade Label="Quantidade" Variant="Variant.Text"
-                        Min="0" Max="10" />
+                        Min="0" Max="10" Required />
                 </MudItem>
             </div>
             <div class=" modal-footer">
