@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Text.Json;
 using Application.ObjetosDto;
+using Application.Services;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,16 @@ public class PedidoVendaController : ControllerBase
 
     readonly IProdutoRepository _produtoRepository;
 
-    public PedidoVendaController(IPedidoVendaRepository pedidoVendaRepository, IProdutoRepository produtoRepository)
+    readonly FilaPedidoVenda _filaPedidoVenda;
+
+    public PedidoVendaController(
+        IPedidoVendaRepository pedidoVendaRepository,
+        IProdutoRepository produtoRepository,
+        FilaPedidoVenda filaPedidoVenda)
     {
         _pedidoVendaRepository = pedidoVendaRepository;
         _produtoRepository = produtoRepository;
+        _filaPedidoVenda = filaPedidoVenda;
     }
 
     [HttpGet("SelecionarTodos")]
@@ -75,22 +82,9 @@ public class PedidoVendaController : ControllerBase
     {
         try
         {
-            PedidoVenda pedidoVenda = new() { Quantidade = pedidoVendaDto.Quantidade, ValorTotal = pedidoVendaDto.ValorTotal };
+            await _filaPedidoVenda.EnviarPedidoVendaFilaAsync(pedidoVendaDto);
 
-            var produtosLookup = (await _produtoRepository.SelecionarTodosAsync()).ToLookup(x => x.Id);
-
-            pedidoVendaDto.Items.ForEach(i => pedidoVenda.AdicionarItem(produtosLookup[i.IdProduto].FirstOrDefault(), i.Quantidade));
-
-            pedidoVenda = await _pedidoVendaRepository.AdicionarAsync(pedidoVenda);
-
-            return Ok(JsonSerializer.Serialize(
-               new
-               {
-                   pedidoVenda.Id,
-                   pedidoVenda.Quantidade,
-                   pedidoVenda.ValorTotal,
-                   Items = pedidoVenda.Items.Select(y => new { y.IdProduto.Id, y.Quantidade, y.ValorTotal, })
-               }));
+            return Ok(JsonSerializer.Serialize(pedidoVendaDto));
         }
         catch (Exception exp)
         {
@@ -103,31 +97,11 @@ public class PedidoVendaController : ControllerBase
     {
         try
         {
-            PedidoVenda pedidoVenda = await _pedidoVendaRepository.SelecionarPorIdAssync(pedidoVendaId);
-            if (pedidoVenda == null)
-            {
-                return NotFound();
-            }
+            pedidoVendaDto.Id = pedidoVendaId;
 
-            pedidoVenda.Quantidade = pedidoVendaDto.Quantidade;
-            pedidoVenda.ValorTotal = pedidoVendaDto.ValorTotal;
+            await _filaPedidoVenda.EnviarPedidoVendaFilaAsync(pedidoVendaDto);
 
-            pedidoVenda.Items.ToList().ForEach(i => pedidoVenda.RemoverItem(i.IdProduto, i.Quantidade));
-
-            var produtosLookup = (await _produtoRepository.SelecionarTodosAsync()).ToLookup(x => x.Id);
-            pedidoVendaDto.Items.ForEach(i => pedidoVenda.AdicionarItem(produtosLookup[i.IdProduto].FirstOrDefault(), i.Quantidade));
-
-            pedidoVenda = await _pedidoVendaRepository.AtualizarAsync(pedidoVenda);
-
-            return Ok(JsonSerializer.Serialize(
-               new
-               {
-                   pedidoVenda.Id,
-                   pedidoVenda.Quantidade,
-                   pedidoVenda.ValorTotal,
-                   Items = pedidoVenda.Items.Select(y => new { y.IdProduto.Id, y.Quantidade, y.ValorTotal, })
-               }));
-
+            return Ok(JsonSerializer.Serialize(pedidoVendaDto));
         }
         catch (Exception exp)
         {

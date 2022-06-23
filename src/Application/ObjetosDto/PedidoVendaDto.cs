@@ -3,6 +3,11 @@
     public class PedidoVendaDto
     {
         /// <summary>
+        /// Obtém ou define Id
+        /// </summary>
+        public long Id { get; set; }
+
+        /// <summary>
         /// Obtém ou define ValorTotal
         /// </summary>
         public double ValorTotal { get; set; }
